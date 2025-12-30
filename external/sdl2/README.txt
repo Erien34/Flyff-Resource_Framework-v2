@@ -1,0 +1,1 @@
+Placeholder for SDL2 development files. Copy SDL2 include/ and lib/ here.

@@ -1,0 +1,27 @@
+
+{
+  "id": "ai",
+  "name": "AI / Behaviour",
+  "scope": "core",
+  "resourceFiles": [
+    { "file": "propMoverAI.txt", "domain": "ai" },
+    { "file": "propAIEvent.inc", "domain": "ai" }
+  ],
+  "parserRules": [
+    { "pattern": "*.txt", "parserId": 0, "priority": 0 },
+    { "pattern": "*.inc", "parserId": 0, "priority": 0 }
+  ],
+  "serializerKey": "ai",
+  "contextBuilderKey": "ai",
+  "dependencies": [ "monster", "skills", "defines" ],
+  "type": "ai",
+  "assetsRequired": {
+    "icon": false,
+    "model": false,
+    "animation": false,
+    "effect": false,
+    "sound": false
+  },
+  "outputModel": "rawAIData",
+  "engineHook": "applyAIMechanics"
+}

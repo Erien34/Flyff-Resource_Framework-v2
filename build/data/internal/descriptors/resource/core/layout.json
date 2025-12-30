@@ -1,0 +1,27 @@
+
+{
+  "id": "layout",
+  "name": "Windows / UI Layout",
+  "scope": "core",
+  "resourceFiles": [
+    { "file": "resdata.inc", "domain": "ui" },
+    { "file": "ResData.h",   "domain": "ui" }
+  ],
+  "parserRules": [
+    { "pattern": "resdata.inc", "parserId": 1, "priority": 10 },
+    { "pattern": "*.h",        "parserId": 0, "priority": 5 }
+  ],
+  "serializerKey": "layout",
+  "contextBuilderKey": "layout",
+  "dependencies": [ "text" ],
+  "type": "layout",
+  "assetsRequired": {
+    "icon": false,
+    "model": false,
+    "animation": false,
+    "effect": false,
+    "sound": false
+  },
+  "outputModel": "rawLayoutData",
+  "engineHook": "applyLayoutRules"
+}
