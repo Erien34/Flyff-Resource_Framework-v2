@@ -1,0 +1,27 @@
+
+{
+  "id": "drops",
+  "name": "Drop Tables",
+  "scope": "core",
+  "resourceFiles": [
+    { "file": "propDropEvent.inc",   "domain": "drop" },
+    { "file": "propGuildQuest.inc",  "domain": "drop" },
+    { "file": "propFlyffpiece.inc",  "domain": "drop" }
+  ],
+  "parserRules": [
+    { "pattern": "*.inc", "parserId": 0, "priority": 0 }
+  ],
+  "serializerKey": "drop",
+  "contextBuilderKey": "drop",
+  "dependencies": [ "items", "monster" ],
+  "type": "drop",
+  "assetsRequired": {
+    "icon": false,
+    "model": false,
+    "animation": false,
+    "effect": false,
+    "sound": false
+  },
+  "outputModel": "rawDropData",
+  "engineHook": ""
+}

@@ -1,0 +1,25 @@
+
+{
+  "id": "jobs",
+  "name": "Jobs / Classes",
+  "scope": "core",
+  "resourceFiles": [
+    { "file": "propJob.inc", "domain": "job" }
+  ],
+  "parserRules": [
+    { "pattern": "*.inc", "parserId": 0, "priority": 0 }
+  ],
+  "serializerKey": "job",
+  "contextBuilderKey": "job",
+  "dependencies": [ "defines", "skills" ],
+  "type": "job",
+  "assetsRequired": {
+    "icon": false,
+    "model": false,
+    "animation": false,
+    "effect": false,
+    "sound": false
+  },
+  "outputModel": "rawJobData",
+  "engineHook": ""
+}

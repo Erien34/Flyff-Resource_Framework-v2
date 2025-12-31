@@ -1,0 +1,53 @@
+
+{
+  "id": "defines",
+  "name": "Defines",
+  "scope": "core",
+  "resourceFiles": [
+    { "file": "defineItem.h",            "domain": "item" },
+    { "file": "defineitemkind.h",        "domain": "item" },
+    { "file": "defineItemType.h",        "domain": "item" },
+    { "file": "defineitemgrade.h",       "domain": "item" },
+
+    { "file": "defineSkill.h",           "domain": "skill" },
+    { "file": "defineText.h",            "domain": "text" },
+
+    { "file": "defineWorld.h",           "domain": "world" },
+    { "file": "ContinentDef.h",          "domain": "world" },
+
+    { "file": "defineAttribute.h",       "domain": "attribute" },
+    { "file": "defineObj.h",             "domain": "object" },
+    { "file": "defineMapComboBoxData.h", "domain": "ui" },
+    { "file": "ResData.h",               "domain": "ui" },
+
+    { "file": "defineJob.h",             "domain": "job" },
+    { "file": "defineHonor.h",           "domain": "job" },
+
+    { "file": "definequest.h",           "domain": "quest" },
+    { "file": "defineSound.h",           "domain": "sound" },
+
+    { "file": "defineEvent.h",           "domain": "event" },
+    { "file": "defineEventArena.h",      "domain": "event" },
+
+    { "file": "defineNeuz.h",             "domain": "engine" },
+
+    { "file": "define.h",                "domain": "global" },
+    { "file": "lang.h",                  "domain": "global" }
+  ],
+  "parserRules": [
+    { "pattern": "*.h", "parserId": 0, "priority": 0 }
+  ],
+  "serializerKey": "define",
+  "contextBuilderKey": "define",
+  "dependencies": [],
+  "type": "define",
+  "assetsRequired": {
+    "icon": false,
+    "model": false,
+    "animation": false,
+    "effect": false,
+    "sound": false
+  },
+  "outputModel": "rawDefineData",
+  "engineHook": ""
+}

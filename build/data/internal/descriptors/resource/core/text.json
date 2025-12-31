@@ -1,0 +1,45 @@
+
+{
+  "id": "text",
+  "name": "Text / Strings",
+  "scope": "core",
+
+  "resourceFiles": [
+
+    { "file": "textClient.txt.txt",  "domain": "ui" },
+    { "file": "resData.txt.txt",     "domain": "ui" },
+    { "file": "textEmotion.txt.txt", "domain": "ui" },
+
+    { "file": "propItem.txt.txt",        "domain": "item" },
+    { "file": "propItemEtc.txt.txt",     "domain": "item" },
+
+    { "file": "propSkill.txt.txt",        "domain": "skill" },
+    { "file": "propTroupeSkill.txt.txt", "domain": "skill" },
+
+    { "file": "character.txt.txt",        "domain": "job" },
+    { "file": "character-etc.txt.txt",    "domain": "job" },
+    { "file": "character-school.txt.txt", "domain": "job" },
+    { "file": "honorList.txt.txt",         "domain": "job" }
+  ],
+
+  "parserRules": [
+    { "pattern": "*.inc", "parserId": 0, "priority": 5 },
+    { "pattern": "*.txt", "parserId": 0, "priority": 0 }
+  ],
+
+  "serializerKey": "text",
+  "contextBuilderKey": "text",
+  "dependencies": [ "defines" ],
+  "type": "text",
+
+  "assetsRequired": {
+    "icon": false,
+    "model": false,
+    "animation": false,
+    "effect": false,
+    "sound": false
+  },
+
+  "outputModel": "rawTextData",
+  "engineHook": ""
+}

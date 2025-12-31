@@ -1,0 +1,18 @@
+2025-12-29 21:39:58 [PIPE] === O3D DUMP START ===
+2025-12-29 21:39:58 [PIPE] modelIndex=1
+2025-12-29 21:39:58 [PIPE] [HEADER] name=mvr_petbabykargo.o3d ver=22 force34=1 poolSize=0 cursor=0
+2025-12-29 21:39:58 [PIPE]  hasForce34=1
+2025-12-29 21:39:58 [PIPE]  poolSize=1
+2025-12-29 21:39:58 [PIPE]  cursorAfterHeader=165
+2025-12-29 21:39:58 [PIPE] [ModelParser] PoolDir APPLY | meshPoolStart=264
+2025-12-29 21:39:58 [PIPE] [MESH]
+2025-12-29 21:39:58 [PIPE]  startCursor=264
+2025-12-29 21:39:58 [PIPE] [MESH][PACKED] hdrAt=312 vc=217600 fc=425984 ic=1277952 unk=263936
+2025-12-29 21:39:58 [PIPE] [MESH][PACKED] hdrAt=313 vc=850 fc=1664 ic=4992 unk=1031
+2025-12-29 21:39:58 [PIPE] [MESH] packedHeadersFound=2
+2025-12-29 21:39:58 [PIPE] [MESH] poolDir: meshPoolStart=264 entries=1
+2025-12-29 21:39:58 [PIPE] [MeshParamBlock] SubMeshes count=0
+2025-12-29 21:39:58 [PIPE] [ModelParser] MeshParam FOUND | DUMMY pbAt=229 vc=0 ic=0 stride=0 subMeshes=0
+2025-12-29 21:39:58 [PIPE] [ModelParser] MeshParamBlock TOTAL = 1
+2025-12-29 21:39:58 [PIPE] [RESULT] mesh parsed
+2025-12-29 21:39:58 [PIPE] === O3D DUMP END ===
