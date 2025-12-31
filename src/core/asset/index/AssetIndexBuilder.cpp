@@ -9,7 +9,7 @@
 
 namespace fs = std::filesystem;
 
-namespace resource
+namespace asset
 {
 static std::string toLower(std::string s)
 {
@@ -304,4 +304,4 @@ AssetIndexBuilder::Index AssetIndexBuilder::build(const Settings& s) const
     return idx;
 }
 
-} // namespace resource
+} // namespace asset

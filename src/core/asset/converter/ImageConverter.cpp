@@ -36,7 +36,7 @@ bool writePngRGBA(
 }
 } // anonymous namespace
 
-namespace resource
+namespace asset
 {
 ConvertResult ImageConverter::convert(const ImageSource& src) const
 {
@@ -79,4 +79,4 @@ ConvertResult ImageConverter::convert(const ImageSource& src) const
     r.ok = true;
     return r;
 }
-} // namespace resource
+} // namespace asset

@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <string>
 
-namespace resource
+namespace asset
 {
     // Technical asset: .sfx (FlyFF)
     // The Asset-Pipeline keeps it as raw bytes; the Converter/Decoder can later

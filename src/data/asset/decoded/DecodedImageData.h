@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-namespace resource
+namespace asset
 {
     struct BinaryData;
 

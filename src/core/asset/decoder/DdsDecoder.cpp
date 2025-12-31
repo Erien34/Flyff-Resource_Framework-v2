@@ -7,7 +7,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace resource
+namespace asset
 {
     // ------------------------------------------------------------
     // DDS structs (packed, little-endian)

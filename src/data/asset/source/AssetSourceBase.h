@@ -7,7 +7,7 @@
 #include "index/AssetIndexBuilder.h" // für AssetTechKind, AssetKind
 #include "BinaryData.h"
 
-namespace resource
+namespace asset
 {
     enum class AssetState
     {

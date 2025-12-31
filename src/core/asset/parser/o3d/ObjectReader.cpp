@@ -17,7 +17,7 @@
 namespace asset::parser::o3d
 {
 
-static bool align4(resource::decode::BinaryReader& br)
+static bool align4(asset::decode::BinaryReader& br)
 {
     const std::size_t pos = br.tell();
     const std::size_t aligned = (pos + 3u) & ~std::size_t(3u);
@@ -30,7 +30,7 @@ bool ObjectReader::read(ObjectReadResult& out,
 {
     out = {};
 
-    resource::decode::BinaryReader br(
+    asset::decode::BinaryReader br(
         reinterpret_cast<const std::vector<unsigned char>&>(bytes));
 
     if (!br.seek(header.cursorAfterHeader))

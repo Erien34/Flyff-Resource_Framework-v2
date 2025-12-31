@@ -4,7 +4,7 @@
 #include "data/asset/source/BinaryData.h"
 #include <string>
 
-namespace resource
+namespace asset
 {
     // Unified decoder for FlyFF-specific / non-standard formats.
     // Only DDS and TGA require custom decoding; standard formats should be handled elsewhere.

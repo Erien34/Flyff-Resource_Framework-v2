@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace resource
+namespace asset
 {
     struct BinaryData;
 

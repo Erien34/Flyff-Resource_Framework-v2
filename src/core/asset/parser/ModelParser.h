@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace resource { struct O3DDecoded; struct O3DParsed; }
+namespace asset { struct O3DDecoded; struct O3DParsed; }
 
 namespace asset::parser
 {
@@ -9,6 +9,6 @@ namespace asset::parser
     {
     public:
         // Strukturelle Analyse: Header/Chunks/Blöcke erkennen – keine Interpretation.
-        static bool parse(resource::O3DParsed& out, const resource::O3DDecoded& in, std::string* outError = nullptr);
+        static bool parse(asset::O3DParsed& out, const asset::O3DDecoded& in, std::string* outError = nullptr);
     };
 }

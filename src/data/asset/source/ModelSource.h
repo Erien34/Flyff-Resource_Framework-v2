@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace resource
+namespace asset
 {
     // FlyFF models are typically split across two locations:
     // - client Model/... : skeleton/bones + attachments metadata

@@ -8,7 +8,7 @@
 
 namespace fs = std::filesystem;
 
-namespace resource
+namespace asset
 {
     static bool readAllBytes(const fs::path& p, BinaryData& out, std::string* err)
     {

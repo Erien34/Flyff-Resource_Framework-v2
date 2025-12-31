@@ -1,6 +1,6 @@
 #include "O3DDecryptor.h"
 
-namespace resource
+namespace asset
 {
 static inline std::uint8_t rot4(std::uint8_t v)
 {

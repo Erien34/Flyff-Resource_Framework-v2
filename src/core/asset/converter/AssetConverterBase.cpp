@@ -1,7 +1,7 @@
 #include "AssetConverterBase.h"
 #include <fstream>
 
-namespace resource
+namespace asset
 {
 fs::path AssetConverterBase::makeOutPathWithExt(const AssetRecord& rec, const char* newExt) const
 {
@@ -67,4 +67,4 @@ bool AssetConverterBase::copyFile(const fs::path& src, const fs::path& dst, std:
     }
     return true;
 }
-} // namespace resource
+} // namespace asset

@@ -1,6 +1,6 @@
 #include "SfxConverter.h"
 
-namespace resource
+namespace asset
 {
 ConvertResult SfxConverter::convert(const SfxSource& src) const
 {
@@ -56,4 +56,4 @@ ConvertResult SfxConverter::convert(const SfxSource& src) const
     r.ok = true;
     return r;
 }
-} // namespace resource
+} // namespace asset

@@ -7,7 +7,7 @@
 #include <memory>
 #include "data/asset/source/AssetSourceBase.h"
 
-namespace resource
+namespace asset
 {
 
 enum class AnimationFormat
@@ -39,4 +39,4 @@ struct AnimationAsset
 
 using AnimationAssetPtr = std::shared_ptr<AnimationAsset>;
 
-} // namespace resource
+} // namespace asset

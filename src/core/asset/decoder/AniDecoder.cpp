@@ -9,7 +9,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace resource
+namespace asset
 {
     static std::string toLowerLocal(std::string s)
     {

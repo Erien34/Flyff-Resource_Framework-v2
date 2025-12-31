@@ -11,7 +11,7 @@
 
 namespace fs = std::filesystem;
 
-namespace resource
+namespace asset
 {
     ConvertResult ModelConverter::convert(const ModelSource& src) const
     {
@@ -36,15 +36,15 @@ namespace resource
         }
 
         // 1) Decode (memory-only aus ModelSource parts)
-        resource::O3DDecoded decoded;
-        if (!resource::O3DDecoder::decode(decoded, src, &err))
+        asset::O3DDecoded decoded;
+        if (!asset::O3DDecoder::decode(decoded, src, &err))
         {
             r.ok = false;
             r.error = err;
             return r;
         }
 
-        // resource::O3DParsed parsed;
+        // asset::O3DParsed parsed;
         // if (!asset::parser::ModelParser::parse(parsed, decoded, &err))
         // {
         //     r.ok = false;

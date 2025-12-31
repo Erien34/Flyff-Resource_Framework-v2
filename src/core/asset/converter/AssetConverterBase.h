@@ -5,7 +5,7 @@
 
 namespace fs = std::filesystem;
 
-namespace resource
+namespace asset
 {
 struct ConvertResult
 {
@@ -55,4 +55,4 @@ protected:
 private:
     ConverterSettings m_settings;
 };
-} // namespace resource
+} // namespace asset

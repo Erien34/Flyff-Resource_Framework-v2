@@ -8,7 +8,7 @@
 
 namespace fs = std::filesystem;
 
-namespace resource
+namespace asset
 {
     static std::string toLowerLocal(std::string s)
     {

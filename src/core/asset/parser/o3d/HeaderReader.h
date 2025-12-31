@@ -5,7 +5,7 @@
 #include <vector>
 #include <optional>
 
-namespace resource::decode { class BinaryReader; }
+namespace asset::decode { class BinaryReader; }
 
 namespace asset::parser::o3d
 {

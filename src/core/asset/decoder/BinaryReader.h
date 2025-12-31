@@ -7,7 +7,7 @@
 #include <optional>
 #include <type_traits>
 
-namespace resource::decode
+namespace asset::decode
 {
     // Minimal binary reader for "sniffing" / simple header parsing.
     // (Full format parsing can be layered on top later.)
@@ -77,4 +77,4 @@ namespace resource::decode
         const std::vector<unsigned char>& m_bytes;
         size_t m_pos = 0;
     };
-} // namespace resource::decode
+} // namespace asset::decode

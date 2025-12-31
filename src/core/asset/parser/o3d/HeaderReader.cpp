@@ -14,7 +14,7 @@ static std::string toLowerCopy(std::string s)
     return s;
 }
 
-static bool readVec3(resource::decode::BinaryReader& br, Vec3& out)
+static bool readVec3(asset::decode::BinaryReader& br, Vec3& out)
 {
     auto x = br.readLE<float>();
     auto y = br.readLE<float>();
@@ -24,7 +24,7 @@ static bool readVec3(resource::decode::BinaryReader& br, Vec3& out)
     return true;
 }
 
-static bool skip(resource::decode::BinaryReader& br, std::size_t n)
+static bool skip(asset::decode::BinaryReader& br, std::size_t n)
 {
     const std::size_t pos = br.tell();
     return br.seek(pos + n);
@@ -44,7 +44,7 @@ bool HeaderReader::read(O3DHeader& out,
         return false;
     }
 
-    resource::decode::BinaryReader br(reinterpret_cast<const std::vector<unsigned char>&>(bytes));
+    asset::decode::BinaryReader br(reinterpret_cast<const std::vector<unsigned char>&>(bytes));
 
     // --- GameSource ---
     // resFp.Read(&cLen, 1, 1);

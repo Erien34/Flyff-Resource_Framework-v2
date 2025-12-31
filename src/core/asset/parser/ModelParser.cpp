@@ -15,8 +15,8 @@
 
 namespace
 {
-static void fillPart(resource::O3DParsedPart& out,
-                     const resource::O3DDecodedPart& in,
+static void fillPart(asset::O3DParsedPart& out,
+                     const asset::O3DDecodedPart& in,
                      const char* name)
 {
     out = {};
@@ -191,7 +191,7 @@ static void fillPart(resource::O3DParsedPart& out,
 }
 namespace asset::parser
 {
-    bool ModelParser::parse(resource::O3DParsed& out, const resource::O3DDecoded& in, std::string* err)
+    bool ModelParser::parse(asset::O3DParsed& out, const asset::O3DDecoded& in, std::string* err)
     {
         out = {};
 

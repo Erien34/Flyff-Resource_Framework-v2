@@ -10,12 +10,13 @@
 #include "Core/Controller/PipelineController.h"
 
 // Pipelines
-#include "Core/Controller/pipeline/ResourcePipeline.h"
-#include "Core/Controller/pipeline/AssetPipeline.h"
+#include "core/Controller/pipeline/ResourcePipeline.h"
+#include "core/Controller/pipeline/AssetPipeline.h"
 
 // (vorerst stubbar)
-#include "Core/Controller/pipeline/SourcePipeline.h"
-#include "Core/Controller/pipeline/RuntimePipeline.h"
+#include "core/Controller/pipeline/SourcePipeline.h"
+#include "core/Controller/pipeline/RuntimePipeline.h"
+
 
 namespace core
 {
@@ -57,7 +58,8 @@ private:
 
     // ================= PIPELINES =================
     ResourcePipeline m_resourcePipeline;
-    AssetPipeline    m_assetPipeline;
+    core::pipeline::AssetPipelineA    m_assetPipelineA;
+    core::pipeline::AssetPipelineB    m_assetPipelineB;
     SourcePipeline   m_sourcePipeline;
     RuntimePipeline  m_runtimePipeline;
 };

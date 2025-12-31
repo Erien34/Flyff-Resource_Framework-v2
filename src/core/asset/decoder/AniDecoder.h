@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace resource
+namespace asset
 {
     struct AniSource;        // falls du später ein eigenes Source-Modell hast
     struct BinaryData;

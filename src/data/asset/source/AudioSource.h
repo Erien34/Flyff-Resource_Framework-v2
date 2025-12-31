@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace resource
+namespace asset
 {
     // Technical asset: wav/ogg/bgm/mp3
     // For now: keep raw bytes (copy/normalize later in converter)

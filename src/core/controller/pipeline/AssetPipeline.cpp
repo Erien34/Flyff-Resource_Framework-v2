@@ -1,6 +1,10 @@
 #include "AssetPipeline.h"
+#include "ProjectData.h"
 
 #include "Log.h"
+
+// ================= ASSET INDEX =================
+#include "core/asset/index/AssetIndexBuilder.h"
 
 // ================= LOADERS =================
 #include "core/asset/loader/ModelLoader.h"
@@ -15,514 +19,254 @@
 #include "core/asset/decoder/AniDecoder.h"
 #include "core/asset/decoder/SfxDecoder.h"
 
-// ================= CONVERTERS =================
-#include "core/asset/converter/ImageConverter.h"
-#include "core/asset/converter/SfxConverter.h"
-#include "core/asset/converter/ModelConverter.h"
-
 // ================= PARSER =================
 #include "asset/parser/ModelParser.h"
 #include "parsed/O3DParsed.h"
 
+// ================= CONVERTERS (Phase B) =================
+#include "core/asset/converter/ImageConverter.h"
+#include "core/asset/converter/SfxConverter.h"
+#include "core/asset/converter/ModelConverter.h"
+
 #include <filesystem>
 #include <map>
 
-using namespace core;
 namespace fs = std::filesystem;
 
-AssetPipeline::AssetPipeline(ProjectData& projectData)
-    : m_projectData(projectData)
+namespace core::pipeline
+{
+
+// ======================================================
+// ASSET PIPELINE A  (LOAD / DECODE / PARSE)
+// ======================================================
+
+AssetPipelineA::AssetPipelineA(struct ProjectData& project)
+    : m_projectData(project)
 {
 }
 
-void AssetPipeline::onReset()
+void AssetPipelineA::onReset()
 {
-    m_state.step = State::Step::ScanAssets;
-    m_assetIndexBuilt = false;
+    m_step = Step::ScanAssets;
+    m_assetIndex.clear();
+    m_loadedModels.clear();
+    m_decodedModels.clear();
 }
 
-PipelineResult AssetPipeline::onUpdate()
+PipelineResult AssetPipelineA::onUpdate()
 {
-    switch (m_state.step)
+    switch (m_step)
     {
-    case State::Step::ScanAssets:
+    case Step::ScanAssets:
         scanAssets();
-        m_state.step = State::Step::BuildDirectories;
+        m_step = Step::BuildDirectories;
         return { JobState::Running, true };
 
-    case State::Step::BuildDirectories:
+    case Step::BuildDirectories:
         buildAssetDirectories();
-        m_state.step = State::Step::LoadAssets;
+        m_step = Step::LoadAssets;
         return { JobState::Running, true };
 
-    case State::Step::LoadAssets:
+    case Step::LoadAssets:
         loadAssets();
-        m_state.step = State::Step::DecryptAssets;
+        m_step = Step::DecryptAssets;
         return { JobState::Running, true };
 
-    case State::Step::DecryptAssets:
+    case Step::DecryptAssets:
         decryptAssets();
-        m_state.step = State::Step::DecodeAssets;
+        m_step = Step::DecodeAssets;
         return { JobState::Running, true };
 
-    case State::Step::DecodeAssets:
+    case Step::DecodeAssets:
         decodeAssets();
-        m_state.step = State::Step::ParseAssets;
+        m_step = Step::ParseAssets;
         return { JobState::Running, true };
 
-    case State::Step::ParseAssets:
+    case Step::ParseAssets:
         parseAssets();
-        m_state.step = State::Step::ConvertAssets;
-        return { JobState::Running, true };
-
-    case State::Step::ConvertAssets:
-        //convertAssets();
-        m_state.step = State::Step::BuildSnapshot;
-        return { JobState::Running, true };
-
-    case State::Step::BuildSnapshot:
-        m_state.step = State::Step::Done;
-        m_jobState = JobState::Done;
+        m_step = Step::Done;
         return { JobState::Done, false };
 
-    case State::Step::Done:
+    case Step::Done:
         return { JobState::Done, false };
     }
 
-    m_jobState = JobState::Error;
-    m_error = "AssetPipeline: invalid state";
-    return { JobState::Error, false, m_error };
+    return { JobState::Error, false, "AssetPipelineA: invalid state" };
 }
 
+// -------------------- Phase A Steps --------------------
 
-
-void AssetPipeline::scanAssets()
+void AssetPipelineA::scanAssets()
 {
-    if (m_assetIndexBuilt)
-        return;
-
-    resource::AssetIndexBuilder builder;
-    resource::AssetIndexBuilder::Settings s;
-    //s.clientRoot        = m_projectData.clientPath;
+    ::asset::AssetIndexBuilder builder;
+    ::asset::AssetIndexBuilder::Settings s;
     s.assetRoot         = m_projectData.assetCachePath;
     s.resourceModelRoot = m_projectData.resourcePath + "/Model";
 
-    // Log::info(
-    //     "[AssetPipeline] ScanAssets: clientRoot='" + s.clientRoot.string() +
-    //     "', resourceModelRoot='" + s.resourceModelRoot.string() +
-    //     "', assetRoot='" + s.assetRoot.string() + "'"
-    //     );
-
-    // 🔹 build index
     m_assetIndex = builder.build(s);
-    m_assetIndexBuilt = true;
-
-    // =====================================================
-    // SUMMARY
-    // =====================================================
-    size_t total = m_assetIndex.size();
-    size_t withClient = 0;
-    size_t withRes = 0;
-
-    std::map<resource::AssetKind, size_t> byKind;
-
-    for (const auto& kv : m_assetIndex)
-    {
-        const auto& r = kv.second;
-        byKind[r.kind]++;
-
-        if (r.existsInClient)   ++withClient;
-        if (r.existsInResource) ++withRes;
-    }
 
     Log::info(
-        "[AssetPipeline] ScanAssets: records=" + std::to_string(total) +
-        " clientPresent=" + std::to_string(withClient) +
-        " resourcePresent=" + std::to_string(withRes)
-        );
-
-    // =====================================================
-    // AssetKind → String (semantisch!)
-    // =====================================================
-    auto kindToStr = [](resource::AssetKind k) -> std::string
-    {
-        using resource::AssetKind;
-        switch (k)
-        {
-        case AssetKind::Texture:    return "Texture";
-        case AssetKind::Image:      return "Image";
-        case AssetKind::UiSprite:   return "UiSprite";
-        case AssetKind::Icon:       return "Icon";
-        case AssetKind::Model:      return "Model";
-        case AssetKind::Animation:  return "Animation";
-        case AssetKind::Sound:      return "Sound";
-        case AssetKind::Sfx:        return "Sfx";
-        case AssetKind::RuntimeChr: return "Chr";
-        case AssetKind::Ignore:     return "Ignore";
-        default:                    return "Unknown";
-        }
-    };
-
-    // for (const auto& kv : byKind)
-    // {
-    //     Log::info(
-    //         "[AssetPipeline] ScanAssets: kind=" +
-    //         kindToStr(kv.first) +
-    //         " count=" + std::to_string(kv.second)
-    //         );
-    // }
-
-    //Log::info("[AssetPipeline] ScanAssets: END");
+        "[AssetPipelineA] ScanAssets: records=" +
+        std::to_string(m_assetIndex.size()));
 }
 
-void AssetPipeline::buildAssetDirectories()
+void AssetPipelineA::buildAssetDirectories()
 {
-    //Log::info("[AssetPipeline] AssetDirectories BEGIN");
-
-    if (!m_assetIndexBuilt || m_assetIndex.empty())
+    for (const auto& kv : m_assetIndex)
     {
-        Log::warn("[AssetPipeline] AssetDirectories: index not built or empty");
-        return;
+        const auto& rec = kv.second;
+        if (rec.kind == ::asset::AssetKind::Ignore)
+            continue;
+
+        std::error_code ec;
+        fs::create_directories(rec.outPath.parent_path(), ec);
     }
 
-    size_t created = 0;
-    size_t failed  = 0;
+    Log::info("[AssetPipelineA] BuildDirectories done");
+}
+
+void AssetPipelineA::loadAssets()
+{
+    m_loadedModels.clear();
 
     for (const auto& kv : m_assetIndex)
     {
         const auto& rec = kv.second;
+        std::string err;
 
-        // Safety: Ignore darf nie Ordner erzeugen
-        if (rec.kind == resource::AssetKind::Ignore)
-            continue;
-
-        const fs::path dir = rec.outPath.parent_path();
-        if (dir.empty())
-            continue;
-
-        std::error_code ec;
-        fs::create_directories(dir, ec); // idempotent
-
-        if (ec)
+        if (rec.techKind == ::asset::AssetTechKind::Model)
         {
-            ++failed;
-            Log::error(
-                "[AssetPipeline] AssetDirectories: create_directories failed: " +
-                dir.string() + " (" + ec.message() + ")"
-                );
-        }
-        else
-        {
-            // create_directories liefert leider kein "created yes/no" ohne Rückgabewert hier,
-            // deshalb zählen wir "attempts" als created. Optional könnten wir vorher exists() prüfen.
-            ++created;
+            ::asset::ModelSource src;
+            if (::asset::ModelLoader::load(src, rec, &err))
+                m_loadedModels.emplace_back(std::move(src));
+            else
+                Log::error(err);
         }
     }
 
     Log::info(
-        "[AssetPipeline] AssetDirectories DONE attempts=" + std::to_string(created) +
-        " failed=" + std::to_string(failed)
-        );
+        "[AssetPipelineA] LoadAssets: models=" +
+        std::to_string(m_loadedModels.size()));
 }
 
-void AssetPipeline::loadAssets()
+void AssetPipelineA::decryptAssets()
 {
-    //Log::info("[AssetPipeline] LoadAssets BEGIN");
-
-    m_loadedModels.clear();
-    m_loadedImages.clear();
-    m_loadedAnimations.clear();
-    m_loadedSfx.clear();
-
-    for (const auto& kv : m_assetIndex)
+    for (auto& mdl : m_loadedModels)
     {
-        const resource::AssetRecord& rec = kv.second;
-        std::string err;
-
-        switch (rec.techKind)
+        auto decryptPart = [&](::asset::ModelPartSource& part)
         {
-        case resource::AssetTechKind::Model:
-        {
-            resource::ModelSource src;
-            if (resource::ModelLoader::load(src, rec, &err))
-                m_loadedModels.emplace_back(std::move(src));
-            else
-                Log::error(err);
-            break;
-        }
-
-            // case resource::AssetTechKind::Texture:
-            // case resource::AssetTechKind::Image:
-            // {
-            //     resource::ImageSource src;
-            //     if (resource::ImageLoader::load(src, rec, &err))
-            //         m_loadedImages.emplace_back(std::move(src));
-            //     else
-            //         Log::error(err);
-            //     break;
-            // }
-
-            // case resource::AssetTechKind::Animation:
-            // {
-            //     resource::AnimationSource src;
-            //     if (resource::AnimationLoader::load(src, rec, &err))
-            //         m_loadedAnimations.emplace_back(std::move(src));
-            //     else
-            //         Log::error(err);
-            //     break;
-            // }
-
-            // case resource::AssetTechKind::Sfx:
-            // {
-            //     resource::SfxSource src;
-            //     if (resource::SfxLoader::load(src, rec, &err))
-            //         m_loadedSfx.emplace_back(std::move(src));
-            //     else
-            //         Log::error(err);
-            //     break;
-            // }
-
-        default:
-            break;
-        }
-    }
-
-    //Log::info("[AssetPipeline] LoadAssets DONE");
-}
-
-void AssetPipeline::decryptAssets()
-{
-    //Log::info("[AssetPipeline] DecryptAssets BEGIN");
-
-    // Wir mutieren die geladenen Sources (Memory-only), damit alle nachfolgenden Steps
-    // nur noch decrypted Bytes sehen.
-    for (auto& src : m_loadedModels)
-    {
-        std::string err;
-
-        auto decryptPart = [&](resource::ModelPartSource& part, const char* tag)
-        {
-            if (!part.exists)
-                return;
-
-            const auto& in = part.bytes.bytes;
-            if (in.empty())
+            if (!part.exists || part.bytes.bytes.empty())
                 return;
 
             std::vector<std::uint8_t> out;
-            std::uint8_t usedKey = 0;
+            std::uint8_t key = 0;
+            std::string err;
 
-            if (!resource::O3DDecryptor::decryptAuto(out, in, &usedKey, &err))
-            {
-                Log::error(std::string("[AssetDecrypt] ") + tag + " decrypt failed: " + err);
-                return;
-            }
-
-            // overwriting the bytes in-place
-            part.bytes.bytes = std::move(out);
-
-            if (usedKey == 0xFF)
-                Log::info(std::string("[AssetDecrypt] ") + tag + " decrypted using key=" + std::to_string((int)usedKey));
+            if (::asset::O3DDecryptor::decryptAuto(out, part.bytes.bytes, &key, &err))
+                part.bytes.bytes = std::move(out);
+            else
+                Log::error(err);
         };
 
-        decryptPart(src.skeleton, "O3D skeleton");
-        decryptPart(src.mesh,     "O3D mesh");
+        decryptPart(mdl.skeleton);
+        decryptPart(mdl.mesh);
     }
 
-    //Log::info("[AssetPipeline] DecryptAssets DONE");
+    Log::info("[AssetPipelineA] DecryptAssets done");
 }
 
-void AssetPipeline::decodeAssets()
+void AssetPipelineA::decodeAssets()
 {
-    //Log::info("[AssetPipeline] DecodeAssets BEGIN");
-
     m_decodedModels.clear();
-    m_decodedImages.clear();
-    m_decodedAni.clear();
-    m_decodedSfx.clear();
 
-    // ---- Models (O3D) ----
-    for (const auto& src : m_loadedModels)
+    for (const auto& mdl : m_loadedModels)
     {
-        resource::O3DDecoded dec;
+        ::asset::O3DDecoded dec;
         std::string err;
-        if (resource::O3DDecoder::decode(dec, src, &err))
+
+        if (::asset::O3DDecoder::decode(dec, mdl, &err))
             m_decodedModels.emplace_back(std::move(dec));
         else
             Log::error(err);
     }
 
-    // ---- Images / DDS ----
-    for (const auto& src : m_loadedImages)
-    {
-        resource::DecodedImageData dec;
-        std::string err;
-
-        if (resource::ImageDecoder::decode(dec, src.bytes, &err))
-        {
-            if (!dec.rgba.empty())   // nur echte Decodes behalten
-                m_decodedImages.emplace_back(std::move(dec));
-        }
-    }
-
-
-    // ---- ANI ----
-    for (const auto& src : m_loadedAnimations)
-    {
-        resource::DecodedAniData dec;
-        std::string err;
-        if (resource::AniDecoder::decode(dec, src.bytes, &err))
-            m_decodedAni.emplace_back(std::move(dec));
-        else
-            Log::error(err);
-    }
-
-    // ---- SFX ----
-    for (const auto& src : m_loadedSfx)
-    {
-        resource::DecodedSfxData dec;
-        std::string err;
-        if (resource::SfxDecoder::decode(dec, src.bytes, &err))
-            m_decodedSfx.emplace_back(std::move(dec));
-        else
-            Log::error(err);
-    }
-
-    //Log::info("[AssetPipeline] DecodeAssets DONE");
+    Log::info(
+        "[AssetPipelineA] DecodeAssets: decodedModels=" +
+        std::to_string(m_decodedModels.size()));
 }
 
-void AssetPipeline::parseAssets()
+void AssetPipelineA::parseAssets()
 {
-    //Log::info("[AssetPipeline] ParseAssets BEGIN");
-
-    std::string err;
-
     for (std::size_t i = 0; i < m_decodedModels.size(); ++i)
     {
-        const auto& dec = m_decodedModels[i];
-        resource::O3DParsed parsed;
+        ::asset::O3DParsed parsed;
+        std::string err;
 
-        // 🔹 sicherstellen, dass Log-Ordner existiert
-        std::filesystem::create_directories("Log");
-
-        // 🔹 stabiler, eindeutiger Dump-Dateiname
-        const std::string dumpPath =
-            "Log/o3d_model_" + std::to_string(i) + ".dump.txt";
-
-        // 🔹 Dump starten
-        Log::enablePipelineLogging(dumpPath);
-        Log::pipelineInfo("=== O3D DUMP START ===");
-        Log::pipelineInfo("modelIndex=" + std::to_string(i));
-
-        if (!asset::parser::ModelParser::parse(parsed, dec, &err))
-        {
-            Log::error(
-                "[AssetPipeline] ModelParser failed: " +
-                (err.empty() ? "<unknown>" : err)
-                );
-
-            Log::pipelineError(
-                "ModelParser failed: " +
-                (err.empty() ? "<unknown>" : err)
-                );
-
-            Log::pipelineInfo("=== O3D DUMP END ===");
-            Log::disablePipelineLogging();   // ✅ IM FEHLERFALL
-            continue;
-        }
-
-        // 🔹 optional: Parser-Ergebnis dumpen
-        if (parsed.mesh.exists)
-            Log::pipelineInfo("[RESULT] mesh parsed");
-        else
-            Log::pipelineInfo("[RESULT] no mesh part");
-
-        Log::pipelineInfo("=== O3D DUMP END ===");
-        Log::disablePipelineLogging();       // ✅ WICHTIG: AUCH IM ERFOLGSFALL
-
-        // Optional: später speichern
-        // m_parsedModels.emplace_back(std::move(parsed));
+        if (!asset::parser::ModelParser::parse(parsed, m_decodedModels[i], &err))
+            Log::error(err);
     }
 
-    // 🔍 Debug / Analyse
-    // if (parsed.mesh.exists)
-    // {
-    //     Log::info(
-    //         "[AssetPipeline] Parsed mesh:"
-    //         " chunks=" + std::to_string(parsed.mesh.chunks.size()) +
-    //         " coverage=" + std::to_string(parsed.mesh.coverage) +
-    //         " scheme=" + parsed.mesh.chosenScheme
-    //         );
-    // }
-    // else
-    // {
-    //     Log::warn("[AssetPipeline] Parsed model has no mesh part");
-    // }
-
-    // Optional: später speichern in m_parsedModels
-    // m_parsedModels.emplace_back(std::move(parsed));
-
-
-    //Log::info("[AssetPipeline] ParseAssets DONE");
+    Log::info("[AssetPipelineA] ParseAssets done");
 }
 
-void AssetPipeline::convertAssets()
-{
-    Log::enablePipelineLogging(
-        m_projectData.logPath + "/asset_convert.log"
-        );
-    Log::info("[AssetPipeline] ConvertAssets BEGIN");
 
-    resource::ConverterSettings cs;
+// ======================================================
+// ASSET PIPELINE B  (APPLY SPECS / CONVERT)
+// ======================================================
+
+AssetPipelineB::AssetPipelineB(struct ProjectData& project)
+    : m_projectData(project)
+{
+}
+
+void AssetPipelineB::onReset()
+{
+    m_step = Step::ConvertAssets;
+}
+
+PipelineResult AssetPipelineB::onUpdate()
+{
+    switch (m_step)
+    {
+    case Step::ConvertAssets:
+        convertAssets();
+        m_step = Step::BuildSnapshot;
+        return { JobState::Running, false };
+
+    case Step::BuildSnapshot:
+        buildSnapshot();
+        m_step = Step::Done;
+        return { JobState::Done, false };
+
+    case Step::Done:
+        return { JobState::Done, false };
+    }
+
+    return { JobState::Error, false, "AssetPipelineB: invalid state" };
+}
+
+// -------------------- Phase B Steps --------------------
+
+void AssetPipelineB::convertAssets()
+{
+    ::asset::ConverterSettings cs;
     cs.overwriteExisting = false;
     cs.modelToolPath = m_projectData.projectRoot + "/tools/model_converter.exe";
-    cs.sfxTargetExtension = ""; // oder ".efs", wenn du willst
 
-    resource::ImageConverter imgConv(cs);
-    resource::SfxConverter   sfxConv(cs);
-    resource::ModelConverter mdlConv(cs);
+    ::asset::ModelConverter modelConv(cs);
+    ::asset::ImageConverter imageConv(cs);
+    ::asset::SfxConverter   sfxConv(cs);
 
-    // ---- Images → PNG ----
-    for (const auto& img : m_loadedImages)
-    {
-        auto res = imgConv.convert(img);
-        if (!res.ok)
-        {
-            Log::pipelineError(
-                "IMAGE rel=" + img.relPath.string() +
-                " src=" + img.sourcePath.string() +
-                " reason=" + (res.error.empty() ? "<decode failed>" : res.error)
-                );
-        }
-    }
+    // ⚠️ Phase B nutzt KEINE Decoder
+    // → nur SourceSpecs + vorhandene AssetSources
 
-    // ---- SFX → pass-through ----
-    // for (const auto& sfx : m_loadedSfx)
-    // {
-    //     auto res = sfxConv.convert(sfx);
-    //     if (!res.ok)
-    //     {
-    //         Log::pipelineError(
-    //             "SFX rel=" + sfx.relPath.string() +
-    //             " src=" + sfx.sourcePath.string() +
-    //             " reason=" + (res.error.empty() ? "<decode failed>" : res.error)
-    //             );
-    //     }
-    // }
-
-    // ---- Models → GLB ----
-    for (const auto& mdl : m_loadedModels)
-    {
-        auto res = mdlConv.convert(mdl);
-        if (!res.ok)
-        {
-            Log::pipelineError(
-                "Model rel=" + mdl.relPath.string() +
-                " src=" + mdl.sourcePath.string() +
-                " reason=" + (res.error.empty() ? "<decode failed>" : res.error)
-                );
-        }
-    }
-
-    Log::info("[AssetPipeline] ConvertAssets DONE");
+    Log::info("[AssetPipelineB] ConvertAssets done");
 }
+
+void AssetPipelineB::buildSnapshot()
+{
+    // v1: Snapshot stub
+    Log::info("[AssetPipelineB] BuildSnapshot (placeholder)");
+}
+
+} // namespace asset::pipeline

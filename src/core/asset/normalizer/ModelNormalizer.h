@@ -13,7 +13,7 @@ namespace asset::normalizer
     public:
         static bool normalizeMesh(
             asset::normalized::NormalizedMesh& out,
-            const resource::O3DParsed& src,
+            const asset::O3DParsed& src,
             std::string* outError = nullptr
         );
     };

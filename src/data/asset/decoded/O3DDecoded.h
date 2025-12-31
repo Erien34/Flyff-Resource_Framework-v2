@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace resource
+namespace asset
 {
     struct O3DDecodedPart
     {

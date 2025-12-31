@@ -3,7 +3,7 @@
 #include "data/asset/source/ImageSource.h"
 #include "data/asset/decoded/DecodedImageData.h"
 
-namespace resource
+namespace asset
 {
 // Adapter: hier dockst du an deine Custom STB-PNG-Write Funktion an.
 struct PngEncoder
@@ -22,4 +22,4 @@ public:
 
     ConvertResult convert(const ImageSource& src) const;
 };
-} // namespace resource
+} // namespace asset

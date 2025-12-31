@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace resource
+namespace asset
 {
     // Simple owned byte buffer used by loaders/decoders.
     struct BinaryData

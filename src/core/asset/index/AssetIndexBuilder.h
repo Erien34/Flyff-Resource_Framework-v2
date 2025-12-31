@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <filesystem>
 
-namespace resource
+namespace asset
 {
 // -----------------------------
 // Semantische Klassifikation (Domain / Use-Case)
@@ -115,4 +115,4 @@ private:
         );
 };
 
-} // namespace resource
+} // namespace asset

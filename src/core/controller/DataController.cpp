@@ -9,7 +9,8 @@ namespace core
 
 DataController::DataController()
     : m_resourcePipeline(m_projectData)
-    , m_assetPipeline(m_projectData)
+    , m_assetPipelineA(m_projectData)
+    , m_assetPipelineB(m_projectData)
     , m_sourcePipeline(m_projectData)   // stub ok
     , m_runtimePipeline(m_projectData)  // stub ok
 {
@@ -62,15 +63,19 @@ void DataController::process()
         break;
 
     case DataState::ResourcePipeline:
-        runPipeline(m_resourcePipeline, DataState::AssetPipeline);
+        runPipeline(m_resourcePipeline, DataState::AssetPipelineA);
         break;
 
-    case DataState::AssetPipeline:
-        runPipeline(m_assetPipeline, DataState::SourcePipeline);
+    case DataState::AssetPipelineA:
+        runPipeline(m_assetPipelineA, DataState::SourcePipeline);
         break;
 
     case DataState::SourcePipeline:
-        runPipeline(m_sourcePipeline, DataState::RuntimePipeline);
+        runPipeline(m_sourcePipeline, DataState::AssetPipelineB);
+        break;
+
+    case DataState::AssetPipelineB:
+        runPipeline(m_assetPipelineB, DataState::RuntimePipeline);
         break;
 
     case DataState::RuntimePipeline:

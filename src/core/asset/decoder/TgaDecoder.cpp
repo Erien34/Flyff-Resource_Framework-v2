@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <cstring>
 
-namespace resource
+namespace asset
 {
 #pragma pack(push, 1)
     struct TgaHeader

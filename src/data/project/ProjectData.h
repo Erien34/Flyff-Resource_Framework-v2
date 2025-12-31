@@ -1,4 +1,5 @@
 #pragma once
+#include "asset/index/AssetIndexBuilder.h"
 
 #include <string>
 

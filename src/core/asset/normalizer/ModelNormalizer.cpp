@@ -4,7 +4,7 @@ namespace asset::normalizer
 {
     bool ModelNormalizer::normalizeMesh(
         asset::normalized::NormalizedMesh& out,
-        const resource::O3DParsed& src,
+        const asset::O3DParsed& src,
         std::string* outError
     )
     {

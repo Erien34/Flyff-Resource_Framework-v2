@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace resource
+namespace asset
 {
 class O3DDecryptor
 {

@@ -2,7 +2,7 @@
 #include "core/asset/converter/AssetConverterBase.h"
 #include "data/asset/source/SfxSource.h"
 
-namespace resource
+namespace asset
 {
 class SfxConverter : public AssetConverterBase
 {
@@ -11,4 +11,4 @@ public:
 
     ConvertResult convert(const SfxSource& src) const;
 };
-} // namespace resource
+} // namespace asset

@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iomanip>
 
-namespace resource
+namespace asset
 {
     static std::string hexPrefix(const std::vector<std::uint8_t>& bytes, std::size_t n)
     {

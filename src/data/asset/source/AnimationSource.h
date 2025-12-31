@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace resource
+namespace asset
 {
     // Technical asset: .ani (FlyFF)
     // The Asset-Pipeline only needs a stable container until conversion.

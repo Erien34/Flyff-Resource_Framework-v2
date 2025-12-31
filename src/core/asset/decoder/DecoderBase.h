@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace resource::decode
+namespace asset::decode
 {
     // Einheitlicher Status für alle Decoder
     struct DecodeStatus
@@ -34,4 +34,4 @@ namespace resource::decode
         DecoderBase() = default;
         virtual ~DecoderBase() = default;
     };
-} // namespace resource::decode
+} // namespace asset::decode

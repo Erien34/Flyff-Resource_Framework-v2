@@ -3,7 +3,7 @@
 #include "data/asset/source/BinaryData.h"
 #include <string>
 
-namespace resource
+namespace asset
 {
     // Minimal TGA decoder:
     // - Supports true-color TGA (uncompressed: type 2, RLE: type 10) with 24/32 bpp

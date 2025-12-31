@@ -2,7 +2,7 @@
 #include "core/asset/converter/AssetConverterBase.h"
 #include "data/asset/source/ModelSource.h"
 
-namespace resource
+namespace asset
 {
     class ModelConverter : public AssetConverterBase
     {

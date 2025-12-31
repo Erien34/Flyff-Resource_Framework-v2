@@ -4,7 +4,7 @@
 #include "data/asset/decoded/DecodedSfxData.h"
 #include "data/asset/source/SfxSource.h"
 
-namespace resource::decode
+namespace asset::decode
 {
 class SfxDecoder final : public DecoderBase
 {
@@ -16,6 +16,6 @@ public:
     };
 
     // Memory-only decode
-    static Result decode(const resource::SfxSource& src);
+    static Result decode(const asset::SfxSource& src);
 };
 }

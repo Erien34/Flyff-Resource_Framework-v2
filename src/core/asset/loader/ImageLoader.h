@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace resource
+namespace asset
 {
     struct AssetRecord;
     struct ImageSource;

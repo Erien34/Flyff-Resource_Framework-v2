@@ -9,7 +9,8 @@ enum class DataState
     Initializing,
 
     ResourcePipeline,
-    AssetPipeline,
+    AssetPipelineA,
+    AssetPipelineB,
     SourcePipeline,
     RuntimePipeline,
     PluginInit,

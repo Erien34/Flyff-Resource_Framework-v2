@@ -3,7 +3,7 @@
 #include <cstdint>
 #include "stb_image.h"
 
-namespace resource
+namespace asset
 {
     static bool isDDS(const BinaryData& bytes)
     {
