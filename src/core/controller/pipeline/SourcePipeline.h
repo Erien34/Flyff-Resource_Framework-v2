@@ -17,6 +17,12 @@
 #include "data/source/index/SourceIndexList.h"
 #include "data/source/collect/SourceGroup.h"
 
+#include "core/source/extract/SourceExtract.h"
+#include "data/source/extract/ExtractFact.h"
+
+#include "core/source/assemble/SourceAssembler.h"
+#include "data/source/spec/MeshRenderSpec.h"
+
 namespace core
 {
 
@@ -76,6 +82,15 @@ private:
 
     // collect result
     std::vector<data::source::SourceGroup> m_groups;
+
+    // extract result (facts)
+    std::vector<core::source::extract::ExtractFact> m_extractFacts;
+
+    // extractor (owns schema extractors)
+    core::source::extract::SourceExtractor m_sourceExtractor;
+
+    core::source::assemble::SourceAssembler m_sourceAssembler;
+    core::source::assemble::model::MeshRenderSpec m_meshRenderSpec;
 };
 
 } // namespace core

@@ -1,5 +1,6 @@
 // SourcePipeline.cpp
 #include "core/controller/pipeline/SourcePipeline.h"
+#include "source/extract/SourceExtract.h"
 
 #include "Log.h"
 
@@ -38,17 +39,17 @@ PipelineResult SourcePipeline::onUpdate()
     case State::Step::SourceExtract:
         extractSource();
         m_state.step = State::Step::SourceAssemble;
-        return { JobState::Running, true };
+        return { JobState::Running, false };
 
     case State::Step::SourceAssemble:
         assembleSource();
         m_state.step = State::Step::SourceValidate;
-        return { JobState::Running, true };
+        return { JobState::Running, false };
 
     case State::Step::SourceValidate:
         validateSource();
         m_state.step = State::Step::SourceSnapshot;
-        return { JobState::Running, true };
+        return { JobState::Running, false };
 
     case State::Step::SourceSnapshot:
         snapshotSource();
@@ -126,26 +127,81 @@ void SourcePipeline::collectSource()
 
 void SourcePipeline::extractSource()
 {
-    // v1 placeholder
-    // Hier docken später SourceExtractBase + konkrete Extractors an (SubMeshRuleExtractor etc.)
+    using namespace core::source::extract;
 
-    Log::info("SourceExtract: placeholder (v1)");
+    // 1) Input aus vorheriger Phase
+    const auto& groups = m_groups; // aus Collect + Descriptor
+
+    // 2) Facts-Zielcontainer (in-memory)
+    m_extractFacts.clear();
+    m_extractFacts.reserve(1024); // optional
+
+    // 3) Extractor ausführen (einziger Einstiegspunkt)
+    m_sourceExtractor.extract(groups, m_extractFacts);
+
+    Log::info(
+        "SourceExtract finished: facts=" +
+        std::to_string(m_extractFacts.size())
+        );
+    for (size_t i = 0; i < std::min<size_t>(55, m_extractFacts.size()); ++i)
+    {
+        const auto& f = m_extractFacts[i];
+        Log::info("  - " + f.factType + " @" + f.file + ":" + std::to_string(f.line));
+    }
 }
 
 void SourcePipeline::assembleSource()
 {
-    // v1 placeholder
-    // Hier mappen wir extrahierte Specs in das interne Tool-Model
+    m_sourceAssembler.assemble(
+        m_extractFacts,
+        m_meshRenderSpec
+        );
 
-    Log::info("SourceAssemble: placeholder (v1)");
+    Log::info(
+        "SourceAssemble finished: "
+        "TriList=" + std::to_string(m_meshRenderSpec.draw.primitiveType ==
+                         core::source::assemble::model::PrimitiveType::TriangleList) +
+        " DIP=" + std::to_string(m_meshRenderSpec.draw.usesDrawIndexedPrimitive) +
+        " PerSubMesh=" + std::to_string(m_meshRenderSpec.draw.perSubMesh) +
+        " LOD=" + std::to_string(m_meshRenderSpec.draw.usesLOD) +
+        " TexEx=" + std::to_string(m_meshRenderSpec.draw.usesMaterialVariants) +
+        " MappingHints=" + std::to_string(m_meshRenderSpec.draw.mappingFieldLocations.size())
+        );
 }
 
 void SourcePipeline::validateSource()
 {
-    // v1 placeholder
-    // Hier Checks: fehlen Regeln? Gruppen leer? widersprüchliche Specs?
+    const auto& d = m_meshRenderSpec.draw;
 
-    Log::info("SourceValidate: placeholder (v1)");
+    auto fail = [&](const std::string& msg)
+    {
+        Log::error("SourceValidate FAILED: " + msg);
+        // je nach deinem Framework: JobState::Failed / Exception / Flag setzen
+        // m_state.step = State::Step::Done; ...
+    };
+
+    if (d.primitiveType != core::source::assemble::model::PrimitiveType::TriangleList)
+        fail("Expected TriangleList primitive type (DrawCall.PrimitiveType.TriangleList missing).");
+
+    if (!d.usesDrawIndexedPrimitive)
+        fail("Expected DrawIndexedPrimitive usage (DrawCall.Invoke.DrawIndexedPrimitive missing).");
+
+    if (!d.perSubMesh)
+        fail("Expected per-submesh draw (DrawCall.PerSubMesh missing).");
+
+    if (!d.hasMaterialBlockEvidence)
+        fail("Expected MATERIAL_BLOCK evidence (SubMesh.Block.Struct + SubMesh.Block.ArrayRead missing).");
+
+    if (d.mappingFieldLocations.empty())
+        fail("Expected mapping hints for MATERIAL_BLOCK fields (DrawCall.Mapping.MaterialBlockField missing).");
+
+    // Warnings (optional)
+    if (!d.usesLOD)
+        Log::warn("SourceValidate: LOD grouping (SetGroup) not detected.");
+    if (!d.usesMaterialVariants)
+        Log::warn("SourceValidate: TextureEx variant not detected.");
+
+    Log::info("SourceValidate OK.");
 }
 
 void SourcePipeline::snapshotSource()
