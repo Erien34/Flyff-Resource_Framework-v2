@@ -1,18 +1,22 @@
-#pragma once
-#include <string>
 #include "SerializerBase.h"
 
-#include "TokenData.h"
+#include "resource/parse/TokenData.h"
 #include <cctype>
+#include <string>
+
+#include "data/global/GlobalStore.h"
 
 namespace modules::serializer
 {
 
 void SerializerBase::run(const std::vector<data::TokenData>& tokens)
 {
-    // zentraler Einstiegspunkt
-    // bewusst KEINE Logik hier
     serialize(tokens);
+}
+
+void SerializerBase::publishModel(const std::string& key, std::any model)
+{
+    GlobalStore::instance().storeModel(key, std::move(model));
 }
 
 // ------------------------------------------------------------
@@ -39,9 +43,6 @@ static std::string trimString(const std::string& s)
 
 // ------------------------------------------------------------
 // normalizeWhitespace
-//  - Spaces + Tabs → TAB
-//  - Mehrere Trenner → 1 TAB
-//  - Keine führenden / trailing Trenner
 // ------------------------------------------------------------
 std::string SerializerBase::normalizeWhitespace(const std::string& line) const
 {
@@ -56,7 +57,7 @@ std::string SerializerBase::normalizeWhitespace(const std::string& line) const
         {
             if (!lastWasSeparator)
             {
-                out.push_back('\t');   // 🔑 kanonischer Trenner
+                out.push_back('\t');
                 lastWasSeparator = true;
             }
         }
@@ -67,13 +68,11 @@ std::string SerializerBase::normalizeWhitespace(const std::string& line) const
         }
     }
 
-    // Tabs am Anfang / Ende entfernen
     return trimString(out);
 }
 
 // ------------------------------------------------------------
 // splitByTab
-//  - Erwartet bereits normalisierte Zeile
 // ------------------------------------------------------------
 std::vector<std::string>
 SerializerBase::splitByTab(const std::string& normalized) const
@@ -94,7 +93,6 @@ SerializerBase::splitByTab(const std::string& normalized) const
         }
     }
 
-    // letztes Feld
     parts.push_back(current);
     return parts;
 }

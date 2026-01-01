@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include "FileEntry.h"
-#include "TokenData.h"
+#include "resource/path/FileEntry.h"
+#include "resource/parse/TokenData.h"
 #include "resource/descriptors/Descriptor.h"
 
 namespace modules::parser

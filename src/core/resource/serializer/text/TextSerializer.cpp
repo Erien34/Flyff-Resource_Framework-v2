@@ -90,6 +90,7 @@ void TextSerializer::serialize(const std::vector<data::TokenData>& streams)
 
     m_data.valid = !m_data.files.empty();
 
+	publishModel(outputModel(), m_data);
     // core::Log::info(
     //     "TextSerializer: collected RAW text data for " +
     //     std::to_string(m_data.files.size()) +

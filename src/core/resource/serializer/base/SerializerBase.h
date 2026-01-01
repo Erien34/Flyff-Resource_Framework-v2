@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <any>
 
 namespace data { struct TokenData; }
 
@@ -19,7 +20,10 @@ public:
 protected:
     virtual void serialize(const std::vector<data::TokenData>& tokens) = 0;
 
+    // Existing helpers
     std::string normalizeWhitespace(const std::string& line) const;
     std::vector<std::string> splitByTab(const std::string& normalized) const;
+
+    void publishModel(const std::string& key, std::any model);
 };
 }

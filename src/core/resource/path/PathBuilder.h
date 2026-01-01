@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "data/module/FileEntry.h"
+#include "resource/path/FileEntry.h"
 #include "resource/descriptors/Descriptor.h"
 
 class PathBuilder

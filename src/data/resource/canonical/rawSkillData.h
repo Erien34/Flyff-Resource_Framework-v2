@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
-#include "TokenData.h"
+#include "resource/parse/TokenData.h"
 
-namespace data::module::layout
+namespace data::module::rawskills
 {
-struct LayoutData
+struct rawSkillData
 {
     std::vector<data::TokenData> streams;
     bool valid = false;

@@ -1,6 +1,6 @@
 #pragma once
 #include "resource/serializer/base/SerializerBase.h"
-#include "gameplay/rawMonsterData.h"
+#include "resource/canonical/rawMonsterData.h"
 
 namespace modules::serializer
 {

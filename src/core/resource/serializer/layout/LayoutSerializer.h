@@ -1,6 +1,8 @@
 #pragma once
-#include "resource/serializer/base/SerializerBase.h"
-#include "layout/rawLayoutData.h"
+
+#include "resource/parse/TokenData.h"
+#include "serializer/base/SerializerBase.h"
+#include "data/resource/canonical/rawLayoutData.h"
 
 namespace modules::serializer
 {
@@ -8,12 +10,17 @@ class LayoutSerializer final : public SerializerBase
 {
 public:
     std::string moduleId() const override { return "layout"; }
-    std::string outputModel() const override { return "rawLayoutData"; }
+
+    std::string outputModel() const override
+    {
+        return "resource.canonical.layout";
+    }
 
 protected:
     void serialize(const std::vector<data::TokenData>& streams) override;
 
 private:
-    data::module::rawlayout::rawLayoutData m_data;
+    data::resource::canonical::rawLayoutData m_data;
 };
 }
+

@@ -1,6 +1,6 @@
 #pragma once
 #include "resource/serializer/base/SerializerBase.h"
-#include "raw/module/ai/rawAIData.h"
+#include "resource/canonical/rawAIData.h"
 
 namespace modules::serializer
 {

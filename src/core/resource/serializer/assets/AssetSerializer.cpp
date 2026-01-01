@@ -1,5 +1,5 @@
 #include "core/resource/serializer/assets/AssetSerializer.h"
-#include "TokenData.h"
+#include "resource/parse/TokenData.h"
 #include "core/Log.h"
 
 #include <sstream>
@@ -73,6 +73,7 @@ void AssetSerializer::serialize(
     m_data = std::move(out);
 
     core::Log::info("[AssetSerializer] Asset data serialized");
+	publishModel(outputModel(), m_data);
 }
 
 bool AssetSerializer::parseEntryLine(
@@ -98,7 +99,7 @@ bool AssetSerializer::parseEntryLine(
     ss >> out.textureEx;
     ss >> out.value;
 
-    return !ss.fail();
+    return !ss.fail();	
 }
 
 } // namespace modules::serializer

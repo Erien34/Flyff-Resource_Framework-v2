@@ -1,7 +1,7 @@
 #pragma once
 #include "resource/serializer/base/SerializerBase.h"
-#include "data/raw/module/defines/rawDefineData.h"
-#include "data/module/TokenData.h"
+#include "resource/canonical/rawDefineData.h"
+#include "resource/parse/TokenData.h"
 
 namespace modules::serializer
 {

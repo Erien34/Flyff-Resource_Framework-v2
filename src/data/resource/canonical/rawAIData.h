@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
-#include "TokenData.h"
+#include "resource/parse/TokenData.h"
 
-namespace data::module::assets
+namespace data::module::rawai
 {
-struct AssetData
+struct rawAIData
 {
     std::vector<data::TokenData> streams;
     bool valid = false;

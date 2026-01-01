@@ -1,7 +1,7 @@
 #pragma once
 
 #include "resource/serializer/base/SerializerBase.h"
-#include "data/raw/module/assets/rawAssetData.h"
+#include "resource/canonical/rawAssetData.h"
 
 namespace modules::serializer
 {

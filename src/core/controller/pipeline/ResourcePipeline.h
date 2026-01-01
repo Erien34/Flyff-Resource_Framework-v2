@@ -13,7 +13,7 @@
 #include "core/resource/serializer/SerializerRegistry.h"
 
 // Data
-#include "TokenData.h"
+#include "resource/parse/TokenData.h"
 
 namespace core
 {

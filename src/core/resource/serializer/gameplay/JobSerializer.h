@@ -1,6 +1,6 @@
 #pragma once
 #include "resource/serializer/base/SerializerBase.h"
-#include "gameplay/rawJobData.h"
+#include "resource/canonical/rawJobData.h"
 
 namespace modules::serializer
 {
