@@ -424,14 +424,13 @@ void DescriptorLoader::bootstrapCoreIfNeeded(const std::string& coreDir)
     // ----------------------------
     // LAYOUT
     // ----------------------------
-    writeFileIfMissing(coreDir, "layout.json", R"json(
+    writeFileIfMissing(coreDir, "ui.json", R"json(
 {
   "id": "layout",
-  "name": "Windows / UI Layout",
+  "name": "Windows / Controls",
   "scope": "core",
   "resourceFiles": [
-    { "file": "resdata.inc", "domain": "ui" },
-    { "file": "ResData.h",   "domain": "ui" }
+    { "file": "resdata.inc", "domain": "ui" }
   ],
   "parserRules": [
     { "pattern": "resdata.inc", "parserId": 1, "priority": 10 },

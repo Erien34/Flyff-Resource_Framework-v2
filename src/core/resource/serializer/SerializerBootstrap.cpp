@@ -37,6 +37,5 @@ void registerCoreSerializers(SerializerRegistry& registry)
     registry.registerSerializer(std::make_unique<AssetSerializer>());
     registry.registerSerializer(std::make_unique<AiSerializer>());
 
-    core::Log::info("All Core-Serializer registered!");
 }
 }

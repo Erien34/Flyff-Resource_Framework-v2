@@ -143,11 +143,6 @@ void SourcePipeline::extractSource()
         "SourceExtract finished: facts=" +
         std::to_string(m_extractFacts.size())
         );
-    for (size_t i = 0; i < std::min<size_t>(55, m_extractFacts.size()); ++i)
-    {
-        const auto& f = m_extractFacts[i];
-        Log::info("  - " + f.factType + " @" + f.file + ":" + std::to_string(f.line));
-    }
 }
 
 void SourcePipeline::assembleSource()
