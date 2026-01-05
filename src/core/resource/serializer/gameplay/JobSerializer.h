@@ -4,10 +4,11 @@
 
 namespace modules::serializer
 {
+
 class JobSerializer final : public SerializerBase
 {
 public:
-    std::string moduleId() const override { return "jobs"; }
+    std::string moduleId() const override { return "job"; }
     std::string outputModel() const override { return "rawJobData"; }
 
 protected:
@@ -16,4 +17,5 @@ protected:
 private:
     data::module::rawjobs::rawJobData m_data;
 };
-}
+
+} // namespace modules::serializer

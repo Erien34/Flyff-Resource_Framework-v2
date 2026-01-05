@@ -25,5 +25,12 @@ protected:
     std::vector<std::string> splitByTab(const std::string& normalized) const;
 
     void publishModel(const std::string& key, std::any model);
+	
+	bool m_inBlockComment = false;
+
+    bool shouldIgnoreLine(const std::string& line);
+	
+	bool isBlockOpen(const std::string& line);
+    bool isBlockClose(const std::string& line);
 };
 }

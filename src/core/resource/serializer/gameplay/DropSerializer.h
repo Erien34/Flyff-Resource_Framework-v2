@@ -4,10 +4,11 @@
 
 namespace modules::serializer
 {
+
 class DropSerializer final : public SerializerBase
 {
 public:
-    std::string moduleId() const override { return "drops"; }
+    std::string moduleId() const override { return "drop"; }
     std::string outputModel() const override { return "rawDropData"; }
 
 protected:
@@ -16,4 +17,5 @@ protected:
 private:
     data::module::rawdrops::rawDropData m_data;
 };
-}
+
+} // namespace modules::serializer

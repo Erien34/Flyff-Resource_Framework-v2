@@ -4,10 +4,11 @@
 
 namespace modules::serializer
 {
+
 class SkillSerializer final : public SerializerBase
 {
 public:
-    std::string moduleId() const override { return "skills"; }
+    std::string moduleId() const override { return "skill"; }
     std::string outputModel() const override { return "rawSkillData"; }
 
 protected:
@@ -16,4 +17,5 @@ protected:
 private:
     data::module::rawskills::rawSkillData m_data;
 };
-}
+
+} // namespace modules::serializer

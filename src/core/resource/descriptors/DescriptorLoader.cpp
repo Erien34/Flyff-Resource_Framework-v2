@@ -200,6 +200,8 @@ void DescriptorLoader::bootstrapCoreIfNeeded(const std::string& coreDir)
     { "file": "TreasureCombine.txt",     "domain": "item" },
     { "file": "TresureCombine.txt",      "domain": "item" },
     { "file": "teleportscroll.txt",      "domain": "item" },
+    { "file": "propFlyffpiece.inc",  "domain": "item" },
+    { "file": "propCtrl.txt",   "domain": "item" },
     { "file": "propGiftbox.inc",     "domain": "item" }
   ],
   "parserRules": [
@@ -227,8 +229,8 @@ void DescriptorLoader::bootstrapCoreIfNeeded(const std::string& coreDir)
     // ----------------------------
     writeFileIfMissing(coreDir, "skills.json", R"json(
 {
-  "id": "skills",
-  "name": "Skills",
+  "id": "skill",
+  "name": "Skill",
   "scope": "core",
   "resourceFiles": [
     { "file": "propSkill.txt",        "domain": "skill" },
@@ -266,6 +268,7 @@ void DescriptorLoader::bootstrapCoreIfNeeded(const std::string& coreDir)
   "scope": "core",
   "resourceFiles": [
     { "file": "propMover.txt",   "domain": "monster" },
+    { "file": "propAggro.txt",   "domain": "monster" },
     { "file": "propMoverEx.inc", "domain": "monster" }
   ],
   "parserRules": [
@@ -292,34 +295,33 @@ void DescriptorLoader::bootstrapCoreIfNeeded(const std::string& coreDir)
     // ----------------------------
     // AI
     // ----------------------------
-    writeFileIfMissing(coreDir, "ai.json", R"json(
-{
-  "id": "ai",
-  "name": "AI / Behaviour",
-  "scope": "core",
-  "resourceFiles": [
-    { "file": "propMoverAI.txt", "domain": "ai" },
-    { "file": "propAIEvent.inc", "domain": "ai" }
-  ],
-  "parserRules": [
-    { "pattern": "*.txt", "parserId": 0, "priority": 0 },
-    { "pattern": "*.inc", "parserId": 0, "priority": 0 }
-  ],
-  "serializerKey": "ai",
-  "contextBuilderKey": "ai",
-  "dependencies": [ "monster", "skills", "defines" ],
-  "type": "ai",
-  "assetsRequired": {
-    "icon": false,
-    "model": false,
-    "animation": false,
-    "effect": false,
-    "sound": false
-  },
-  "outputModel": "rawAIData",
-  "engineHook": "applyAIMechanics"
-}
-)json");
+//     writeFileIfMissing(coreDir, "ai.json", R"json(
+// {
+//   "id": "ai",
+//   "name": "AI / Behaviour",
+//   "scope": "core",
+//   "resourceFiles": [
+//     { "file": "propMover.txt", "domain": "ai" }
+//   ],
+//   "parserRules": [
+//     { "pattern": "*.txt", "parserId": 0, "priority": 0 },
+//     { "pattern": "*.inc", "parserId": 0, "priority": 0 }
+//   ],
+//   "serializerKey": "ai",
+//   "contextBuilderKey": "ai",
+//   "dependencies": [ "monster", "skills", "defines" ],
+//   "type": "ai",
+//   "assetsRequired": {
+//     "icon": false,
+//     "model": false,
+//     "animation": false,
+//     "effect": false,
+//     "sound": false
+//   },
+//   "outputModel": "rawAIData",
+//   "engineHook": "applyAIMechanics"
+// }
+// )json");
 
 
     // ----------------------------
@@ -327,13 +329,12 @@ void DescriptorLoader::bootstrapCoreIfNeeded(const std::string& coreDir)
     // ----------------------------
     writeFileIfMissing(coreDir, "drops.json", R"json(
 {
-  "id": "drops",
+  "id": "drop",
   "name": "Drop Tables",
   "scope": "core",
   "resourceFiles": [
     { "file": "propDropEvent.inc",   "domain": "drop" },
-    { "file": "propGuildQuest.inc",  "domain": "drop" },
-    { "file": "propFlyffpiece.inc",  "domain": "drop" }
+    { "file": "propGuildQuest.inc",  "domain": "drop" }
   ],
   "parserRules": [
     { "pattern": "*.inc", "parserId": 0, "priority": 0 }
@@ -395,7 +396,7 @@ void DescriptorLoader::bootstrapCoreIfNeeded(const std::string& coreDir)
     // ----------------------------
     writeFileIfMissing(coreDir, "jobs.json", R"json(
 {
-  "id": "jobs",
+  "id": "job",
   "name": "Jobs / Classes",
   "scope": "core",
   "resourceFiles": [

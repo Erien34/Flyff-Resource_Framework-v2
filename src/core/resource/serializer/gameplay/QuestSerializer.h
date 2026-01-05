@@ -14,6 +14,6 @@ protected:
     void serialize(const std::vector<data::TokenData>& streams) override;
 
 private:
-    data::module::rawquests::rawQuestData m_data;
+    data::module::rawquest::rawQuestData m_data;
 };
 }

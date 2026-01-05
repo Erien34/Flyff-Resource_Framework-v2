@@ -525,5 +525,5 @@ void LayoutSerializer::serialize(const std::vector<data::TokenData>& streams)
         core::Log::warn("[LayoutSerializer] WARNINGS: " + std::to_string(m_data.warnings.size()));
 
     // kompakter dump (sonst explodiert dein Log bei 471 windows / 3.5k controls)
-    logLayoutSummary(m_data, /*maxWindowsPerStream*/3, /*maxControlsPerWindow*/5);
+    //logLayoutSummary(m_data, /*maxWindowsPerStream*/3, /*maxControlsPerWindow*/5);
 }

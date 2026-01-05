@@ -4,6 +4,7 @@
 
 namespace modules::serializer
 {
+
 class MonsterSerializer final : public SerializerBase
 {
 public:
@@ -14,6 +15,7 @@ protected:
     void serialize(const std::vector<data::TokenData>& streams) override;
 
 private:
-    data::module::rawmonster::rawMonsterData m_data;
+    data::module::rawmonsters::rawMonsterData m_data;
 };
-}
+
+} // namespace modules::serializer

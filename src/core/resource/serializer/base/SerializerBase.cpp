@@ -97,4 +97,50 @@ SerializerBase::splitByTab(const std::string& normalized) const
     return parts;
 }
 
+bool SerializerBase::shouldIgnoreLine(const std::string& line)
+{
+    std::string trimmed = normalizeWhitespace(line);
+
+    if (trimmed.empty())
+        return true;
+
+    // Block-Kommentar START
+    if (!m_inBlockComment)
+    {
+        auto start = trimmed.find("/*");
+        if (start != std::string::npos)
+        {
+            m_inBlockComment = true;
+
+            // Block beginnt und endet in derselben Zeile
+            if (trimmed.find("*/", start + 2) != std::string::npos)
+            {
+                m_inBlockComment = false;
+            }
+            return true;
+        }
+    }
+    else
+    {
+        // Block-Kommentar ENDE
+        if (trimmed.find("*/") != std::string::npos)
+        {
+            m_inBlockComment = false;
+        }
+        return true;
+    }
+
+    return false;
+}
+
+bool SerializerBase::isBlockOpen(const std::string& line)
+{
+    return normalizeWhitespace(line) == "{";
+}
+
+bool SerializerBase::isBlockClose(const std::string& line)
+{
+    return normalizeWhitespace(line) == "}";
+}
+
 } // namespace modules::serializer
