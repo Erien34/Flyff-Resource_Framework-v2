@@ -3,8 +3,17 @@
 
 struct FileEntry
 {
-    std::string moduleId;      // z.B. "items"
-    std::string filename;      // z.B. "propItem.txt"
-    std::string absolutePath;  // D:/Flyff/Resource/propItem.txt
-    std::string domain;
+    std::string moduleId;     // leer für World-Dateien
+    std::string filename;
+    std::string domain;       // z.B. "world"
+    std::string absolutePath;
+
+    enum class Source
+    {
+        Unknown,
+        Client,
+        Resource
+    };
+
+    Source source = Source::Unknown; // Client / Resource / Unknown
 };

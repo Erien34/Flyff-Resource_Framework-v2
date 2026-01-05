@@ -3,6 +3,7 @@
 #include "Log.h"
 #include "core/resource/descriptors/DescriptorLoader.h"
 #include "core/resource/serializer/SerializerBootstrap.h"
+#include "resource/path/PathBuilder.h"
 
 using namespace core;
 using namespace modules::serializer;
@@ -23,6 +24,11 @@ PipelineResult ResourcePipeline::onUpdate()
     {
     case State::Step::LoadDescriptors:
         loadDescriptors();
+        m_state.step = State::Step::ScanPaths;
+        return { JobState::Running, true };
+
+    case State::Step::ScanPaths:
+        scanPaths();
         m_state.step = State::Step::BuildPaths;
         return { JobState::Running, true };
 
@@ -82,8 +88,46 @@ void ResourcePipeline::loadDescriptors()
     Log::info("Descriptors loaded");
 }
 
+void ResourcePipeline::scanPaths()
+{
+    resource::PathScanner scanner;
+
+    resource::PathScanner::Settings s;
+    s.clientRoot   = m_projectData.clientPath;
+    s.resourceRoot = m_projectData.resourcePath;
+    s.worldFolderName = "World";
+
+    m_state.scanPaths = scanner.scan(s);
+
+    // Optional: Logging (sehr empfohlen)
+    Log::info(
+        "[ResourcePipeline] PathScanner: " +
+        std::to_string(m_state.scanPaths.size()) +
+        " world groups detected"
+        );
+}
+
 void ResourcePipeline::buildPaths()
 {
+    // 1) ZUERST: World-Dateien einsammeln
+    for (const auto& [domain, group] : m_state.scanPaths)
+    {
+        for (const auto& e : group.clientFiles)
+            PathBuilder::addFile(
+                e.absPath,
+                e.domain,
+                FileEntry::Source::Client
+                );
+
+        for (const auto& e : group.resourceFiles)
+            PathBuilder::addFile(
+                e.absPath,
+                e.domain,
+                FileEntry::Source::Resource
+                );
+    }
+
+    // 2) DANACH: Deskriptor-Dateien + World-Dateien zusammenbauen
     auto descriptors = m_descriptorRegistry.all();
 
     std::vector<modules::descriptors::Descriptor> list;
@@ -95,12 +139,11 @@ void ResourcePipeline::buildPaths()
         list
         );
 
-    Log::info("BuildPaths found " + std::to_string(m_pathEntries.size()) + " files");
-
-    // for (auto& f : m_pathEntries)
-    // {
-    //     Log::info("[" + f.moduleId + "] " + f.filename);
-    // }
+    Log::info(
+        "BuildPaths found " +
+        std::to_string(m_pathEntries.size()) +
+        " files"
+        );
 }
 
 void ResourcePipeline::parseFiles()
@@ -121,16 +164,6 @@ void ResourcePipeline::parseFiles()
 
         m_parsedTokens.emplace_back(std::move(tokens));
 
-        // Log::info(
-        //     "Parsed " + file.filename +
-        //     " -> tokens: " + std::to_string(m_parsedTokens.back().tokens.size())
-        //     );
-
-        Log::info(
-            "Parsed " + file.filename +
-            " [module=" + file.moduleId +
-            ", domain=" + file.domain + "]"
-            );
     }
 }
 

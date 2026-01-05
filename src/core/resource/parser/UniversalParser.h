@@ -11,6 +11,7 @@ namespace modules::parser
 class UniversalParser
 {
 public:
+    bool isParsable(const FileEntry& file) const;
     data::TokenData parse(
         const FileEntry& file,
         const std::string& resourceRoot

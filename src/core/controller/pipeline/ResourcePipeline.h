@@ -11,6 +11,7 @@
 #include "core/resource/path/PathBuilder.h"
 #include "core/resource/parser/UniversalParser.h"
 #include "core/resource/serializer/SerializerRegistry.h"
+#include "core/resource/scanner/PathScanner.h"
 
 // Data
 #include "resource/parse/TokenData.h"
@@ -36,6 +37,7 @@ private:
         enum class Step
         {
             LoadDescriptors,
+            ScanPaths,
             BuildPaths,
             ParseFiles,
             SerializeData,
@@ -45,6 +47,10 @@ private:
         };
 
         Step step = Step::LoadDescriptors;
+        std::unordered_map<
+            std::string,
+            resource::PathScanner::Group
+            > scanPaths;
     };
 
     State m_state;
@@ -54,6 +60,7 @@ private:
     // Pipeline Steps
     // =====================
     void loadDescriptors();
+    void scanPaths();
     void buildPaths();
     void parseFiles();
     void serializeData();

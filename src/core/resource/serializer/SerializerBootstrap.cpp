@@ -16,7 +16,7 @@
 // Other
 #include "layout/LayoutSerializer.h"
 #include "assets/AssetSerializer.h"
-#include "ai/AISerializer.h"
+#include "WorldSerializer.h"
 #include "Log.h"
 
 namespace modules::serializer
@@ -35,7 +35,7 @@ void registerCoreSerializers(SerializerRegistry& registry)
 
     registry.registerSerializer(std::make_unique<LayoutSerializer>());
     registry.registerSerializer(std::make_unique<AssetSerializer>());
-    registry.registerSerializer(std::make_unique<AiSerializer>());
+    registry.registerSerializer(std::make_unique<WorldSerializer>());
 
 }
 }
